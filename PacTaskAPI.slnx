@@ -1,0 +1,5 @@
+<Solution>
+  <Folder Name="/PacTaskAPI/">
+    <Project Path="PacTaskAPI/PacTaskAPI/PacTaskAPI.csproj" />
+  </Folder>
+</Solution>
