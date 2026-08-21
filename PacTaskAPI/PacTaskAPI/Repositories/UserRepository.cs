@@ -55,5 +55,27 @@ namespace PacTaskAPI.Repositories
             await _context.SaveChangesAsync();
             return user;
         }
+
+        public async Task<User?> Update(int id, UpdateUserRequestDto userDto)
+        {
+            var userModel = await _context.Users.FindAsync(id);
+            
+            if (userModel == null) return null;
+
+            if (userDto.Username != null)
+            {
+                userModel.Username = userDto.Username;
+            }
+            if (userDto.Email != null)
+            {
+                userModel.Email = userDto.Email;
+            }
+            if (userDto.Password != null)
+            {
+                userModel.PasswordHash = _passwordService.HashPassword(userModel, userDto.Password);
+            }
+            await _context.SaveChangesAsync();
+            return userModel;
+        }
     }
 }

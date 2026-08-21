@@ -34,8 +34,8 @@ namespace PacTaskAPI.Controllers
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
             var userModel = await _userRepo.GetUser(id);
-            if(userModel == null) return NotFound("User requested has no been found!");
-            return Ok(userModel);
+            if(userModel == null) return NotFound($"No user with id: {id}");
+            return Ok(userModel.FromUserToUserDto());
         }
 
         [HttpPost]
@@ -56,7 +56,19 @@ namespace PacTaskAPI.Controllers
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
             var userModel = await _userRepo.Login(userDto);
-            if (userModel == null) return BadRequest();
+            if (userModel == null) return BadRequest("Invalid credentials");
+            return Ok(userModel.FromUserToUserDto());
+        }
+
+        [HttpPut]
+        [Route("{id:int}")]
+        public async Task<IActionResult> Update([FromRoute]int id,[FromBody] UpdateUserRequestDto userDto)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            var userModel = await _userRepo.Update(id, userDto);
+            if (userModel == null) return BadRequest($"No user found with id: {id}");
+
             return Ok(userModel.FromUserToUserDto());
         }
 
