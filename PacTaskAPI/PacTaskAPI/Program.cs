@@ -22,6 +22,7 @@ builder.Services.AddDbContext<ApplicationDBContext>(options =>
 
 builder.Services.AddScoped<PasswordHasher<User>>(); // You need this for the injection in the PasswordService
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IEnvironmentRepository, EnvironmentRepository>();
 builder.Services.AddScoped<IPasswordService, PasswordService>();
 
 var app = builder.Build();
