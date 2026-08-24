@@ -8,6 +8,6 @@ namespace PacTaskAPI.Interfaces
 {
     public interface ITokenService
     {
-        string CreateToken(User user);
+        string CreateToken(UserEntity user);
     }
 }

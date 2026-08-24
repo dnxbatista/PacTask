@@ -13,6 +13,6 @@ namespace PacTaskAPI.Models
         public string Title { get; set; } = string.Empty;
         public ICollection<TaskEntity> Tasks { get; set; } = new List<TaskEntity>();
         public int UserId { get; set; }
-        public User? User { get; set; }
+        public UserEntity? User { get; set; }
     }
 }

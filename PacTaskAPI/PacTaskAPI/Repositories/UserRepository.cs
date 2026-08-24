@@ -21,26 +21,17 @@ namespace PacTaskAPI.Repositories
             _passwordService = passwordService;
         }
 
-        public async Task<User?> Delete(int id)
+        public async Task<UserEntity?> GetUserByEmail(string email)
         {
-            var userModel = await _context.Users.FindAsync(id);
-            if (userModel == null) return null;
-            _context.Users.Remove(userModel);
-            await _context.SaveChangesAsync();
-            return userModel;
+            return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
         }
 
-        public async Task<List<User>> GetAll()
+        public async Task<UserEntity?> GetUserByUsername(string username)
         {
-            return await _context.Users.ToListAsync();
+            return await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
         }
 
-        public async Task<User?> GetUser(int id)
-        {
-            return await _context.Users.FindAsync(id);
-        }
-
-        public async Task<User?> Login(LoginUserRequestDto userDto)
+        public async Task<UserEntity?> Login(LoginUserRequestDto userDto)
         {
             var loginUser = await _context.Users.FirstOrDefaultAsync(u => u.Username == userDto.Username || u.Email == userDto.Email);
             if (loginUser == null) return null;
@@ -48,7 +39,7 @@ namespace PacTaskAPI.Repositories
             return loginUser;
         }
 
-        public async Task<User> Register(User user, string rawPassword)
+        public async Task<UserEntity> Register(UserEntity user, string rawPassword)
         {
             user.PasswordHash = _passwordService.HashPassword(user, rawPassword);
             await _context.Users.AddAsync(user);
@@ -56,9 +47,9 @@ namespace PacTaskAPI.Repositories
             return user;
         }
 
-        public async Task<User?> Update(int id, UpdateUserRequestDto userDto)
+        public async Task<UserEntity?> Update(UserEntity user, UpdateUserRequestDto userDto)
         {
-            var userModel = await _context.Users.FindAsync(id);
+            var userModel = user;
             
             if (userModel == null) return null;
 

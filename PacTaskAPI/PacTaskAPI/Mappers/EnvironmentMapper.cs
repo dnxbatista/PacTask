@@ -14,17 +14,16 @@ namespace PacTaskAPI.Mappers
             return new EnvironmentDto
             {
                 Id = environmentModel.Id,
-                Title = environmentModel.Title,
-                UserId = environmentModel.UserId,
-                Tasks = environmentModel.Tasks
+                Title = environmentModel.Title
             };
         }
 
-        public static EnvironmentEntity FromCreateToEnvironmentDto(this CreateEnvironmentRequestDto environmentDto)
+        public static EnvironmentEntity FromCreateToEnvironmentDto(this CreateEnvironmentRequestDto environmentDto, int userId)
         {
             return new EnvironmentEntity
             {
-                Title = environmentDto.Title
+                Title = environmentDto.Title,
+                UserId = userId
             };
         }
     }

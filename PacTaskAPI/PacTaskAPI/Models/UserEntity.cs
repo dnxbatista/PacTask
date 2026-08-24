@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace PacTaskAPI.Models
 {
     [Table("Users")]
-    public class User
+    public class UserEntity
     {
         public int Id { get; set; }
         public string Username { get; set; } = string.Empty;

@@ -9,7 +9,7 @@ namespace PacTaskAPI.Mappers
 {
     public static class UserMapper
     {
-        public static UserDto FromUserToUserDto(this User user)
+        public static UserDto FromUserToUserDto(this UserEntity user)
         {
             return new UserDto
             {
@@ -20,9 +20,9 @@ namespace PacTaskAPI.Mappers
             };
         }
 
-        public static User FromRegisterUserToUser(this RegisterUserRequestDto userDto)
+        public static UserEntity FromRegisterUserToUser(this RegisterUserRequestDto userDto)
         {
-            return new User
+            return new UserEntity
             {
                 Username = userDto.Username,
                 Email = userDto.Email,

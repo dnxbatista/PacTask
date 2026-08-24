@@ -8,7 +8,7 @@ namespace PacTaskAPI.Interfaces
 {
     public interface IPasswordService
     {
-        string HashPassword(User user, string rawPassword);
-        bool VerifyPassword(User user, string passwordHash, string rawPassword);
+        string HashPassword(UserEntity user, string rawPassword);
+        bool VerifyPassword(UserEntity user, string passwordHash, string rawPassword);
     }
 }

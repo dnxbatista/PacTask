@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PacTaskAPI.DTOs.User;
+using PacTaskAPI.Extensions;
 using PacTaskAPI.Interfaces;
 using PacTaskAPI.Mappers;
 
@@ -15,32 +16,11 @@ namespace PacTaskAPI.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserRepository _userRepo;
-        private readonly IPasswordService _passwordService;
         private readonly ITokenService _tokenService;
-        public UserController(IUserRepository userRepo, IPasswordService passwordService, ITokenService tokenService)
+        public UserController(IUserRepository userRepo, ITokenService tokenService)
         {
             _userRepo = userRepo;
-            _passwordService = passwordService;
             _tokenService = tokenService;
-        }
-        
-        [HttpGet]
-        [Authorize]
-        public async Task<IActionResult> GetAll()
-        {
-            var allUsers = await _userRepo.GetAll();
-            var allUsersDto = allUsers.Select(u => u.FromUserToUserDto());
-            return Ok(allUsersDto);
-        }
-
-        [HttpGet]
-        [Authorize]
-        [Route("{id:int}")]
-        public async Task<IActionResult> GetById([FromRoute] int id)
-        {
-            var userModel = await _userRepo.GetUser(id);
-            if(userModel == null) return NotFound($"No user with id: {id}");
-            return Ok(userModel.FromUserToUserDto());
         }
 
         [HttpPost]
@@ -52,15 +32,14 @@ namespace PacTaskAPI.Controllers
             var userModel = userDto.FromRegisterUserToUser();
             var newUser = await _userRepo.Register(userModel, userDto.Password);
 
-            var newUserModel = new NewUserDto
+            var loggedUserDto = new LoggedUserDto
             {
                 Email = userModel.Email,
                 Username = userModel.Username,
-                Environments = userModel.Environments,
                 Token = _tokenService.CreateToken(userModel)
             };
 
-            return Ok(newUserModel);
+            return Ok(loggedUserDto);
         }
 
         [HttpPost]
@@ -71,38 +50,30 @@ namespace PacTaskAPI.Controllers
             var userModel = await _userRepo.Login(userDto);
             if (userModel == null) return Unauthorized("Invalid credentials");
 
-            var newUserModel = new NewUserDto
+            var loggedUserDto = new LoggedUserDto
             {
                 Email = userModel.Email,
                 Username = userModel.Username,
-                Environments = userModel.Environments,
                 Token = _tokenService.CreateToken(userModel)
             };
 
-            return Ok(newUserModel);
+            return Ok(loggedUserDto);
         }
 
         [HttpPut]
-        [Route("{id:int}")]
         [Authorize]
-        public async Task<IActionResult> Update([FromRoute]int id,[FromBody] UpdateUserRequestDto userDto)
+        public async Task<IActionResult> Update([FromBody] UpdateUserRequestDto userDto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            var userModel = await _userRepo.Update(id, userDto);
-            if (userModel == null) return BadRequest($"No user found with id: {id}");
+            var username = User.GetUsername();
+            var userModel = await _userRepo.GetUserByUsername(username);
+            if (userModel == null) return BadRequest("User not found");
 
-            return Ok(userModel.FromUserToUserDto());
-        }
+            var updatedUser = await _userRepo.Update(userModel, userDto);
+            if (updatedUser == null) return BadRequest("Failed to update user");
 
-        [HttpDelete]
-        [Route("{id:int}")]
-        [Authorize]
-        public async Task<IActionResult> Delete([FromRoute] int id)
-        {
-            var userModel = await _userRepo.Delete(id);
-            if (userModel == null) return NotFound("User has not no been found!");
-            return Ok($"Delete user of id: {userModel.Id}");
+            return Ok(updatedUser.FromUserToUserDto());
         }
     }
 }

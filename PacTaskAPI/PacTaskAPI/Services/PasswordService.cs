@@ -10,19 +10,19 @@ namespace PacTaskAPI.Services
 {
     public class PasswordService : IPasswordService
     {
-        private readonly PasswordHasher<User> _hasher = new PasswordHasher<User>();
+        private readonly PasswordHasher<UserEntity> _hasher = new PasswordHasher<UserEntity>();
 
-        public PasswordService(PasswordHasher<User> hasher)
+        public PasswordService(PasswordHasher<UserEntity> hasher)
         {
             _hasher = hasher;
         }
 
-        public string HashPassword(User user, string rawPassword)
+        public string HashPassword(UserEntity user, string rawPassword)
         {
             return _hasher.HashPassword(user, rawPassword);
         }
 
-        public bool VerifyPassword(User user, string passwordHash, string rawPassword)
+        public bool VerifyPassword(UserEntity user, string passwordHash, string rawPassword)
         {
             var result = _hasher.VerifyHashedPassword(user, passwordHash, rawPassword);
             return result == PasswordVerificationResult.Success;

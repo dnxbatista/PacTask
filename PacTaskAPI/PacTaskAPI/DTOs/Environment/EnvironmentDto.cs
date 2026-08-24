@@ -10,7 +10,5 @@ namespace PacTaskAPI.DTOs.Environment
     {
         public int Id { get; set; }
         public string Title { get; set; } = string.Empty;
-        public ICollection<TaskEntity> Tasks { get; set; } = new List<TaskEntity>();
-        public int UserId { get; set; }
     }
 }
