@@ -84,6 +84,7 @@ builder.Services.AddAuthentication(options => // JWT Bearer part
 builder.Services.AddScoped<PasswordHasher<UserEntity>>(); // You need this for the injection in the PasswordService
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IEnvironmentRepository, EnvironmentRepository>();
+builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 builder.Services.AddScoped<IPasswordService, PasswordService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 

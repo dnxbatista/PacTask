@@ -9,8 +9,8 @@ namespace PacTaskAPI.Interfaces
 {
     public interface IEnvironmentRepository
     {
-        Task<EnvironmentEntity?> GetById(int id);
         Task<List<EnvironmentEntity>> GetUserEnvironments(UserEntity user);
+        Task<EnvironmentEntity?> GetEnvironmentById(int id);
         Task<bool> CheckIfUserHasEnvironment(int id, UserEntity user);
         Task<EnvironmentEntity> Create(EnvironmentEntity environmentModel);
         Task<EnvironmentEntity?> Update(int id, UpdateEnvironmentRequestDto environmentDto);

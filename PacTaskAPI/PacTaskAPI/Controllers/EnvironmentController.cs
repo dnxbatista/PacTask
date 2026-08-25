@@ -50,7 +50,7 @@ namespace PacTaskAPI.Controllers
             var user = await _userRepo.GetUserByUsername(User.GetUsername());
             if (user == null) return NotFound("User not found");
 
-            var environmentModel = environmentDto.FromCreateToEnvironmentDto(user.Id);
+            var environmentModel = environmentDto.FromCreateToEnvironmentModel(user.Id);
             await _environmentRepo.Create(environmentModel);
             return CreatedAtAction(nameof(CreateEnvironment), new { id = environmentModel.Id }, environmentDto);
         }
@@ -66,7 +66,7 @@ namespace PacTaskAPI.Controllers
             if (user == null) return NotFound("User not found");
 
             // Check if the logged user is owner of the environment that he wants to update
-            if (!await _environmentRepo.CheckIfUserHasEnvironment(id, user)) return Unauthorized("You cant update this env");
+            if (!await _environmentRepo.CheckIfUserHasEnvironment(id, user)) return Unauthorized("You dont have permission to update this environment");
 
             var updatedEnvironment = await _environmentRepo.Update(id, environmentDto);
             if (updatedEnvironment == null) return NotFound("Environment not found");
@@ -82,7 +82,7 @@ namespace PacTaskAPI.Controllers
             var user = await _userRepo.GetUserByUsername(User.GetUsername());
             if (user == null) return BadRequest("User not found");
 
-            if (!await _environmentRepo.CheckIfUserHasEnvironment(id, user)) return Unauthorized("You cant update this env");
+            if (!await _environmentRepo.CheckIfUserHasEnvironment(id, user)) return Unauthorized("You dont have permission to delete this environment");
 
             var userToDelete = await _environmentRepo.Delete(id);
             if (userToDelete == null) return NotFound("Environment not found");

@@ -1,6 +1,6 @@
 namespace PacTaskAPI.Enums
 {
-    public enum TaskStatus
+    public enum TaskEntityStatus
     {
         NotDone,
         Done

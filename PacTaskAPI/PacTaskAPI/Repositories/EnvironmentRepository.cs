@@ -43,7 +43,7 @@ namespace PacTaskAPI.Repositories
             return environmentModel;
         }
 
-        public async Task<EnvironmentEntity?> GetById(int id)
+        public async Task<EnvironmentEntity?> GetEnvironmentById(int id)
         {
             return await _context.Environments.FindAsync(id);
         }
