@@ -26,12 +26,14 @@ namespace PacTaskAPI.Data
             modelBuilder.Entity<EnvironmentEntity>()
             .HasOne(e => e.User)
             .WithMany(u => u.Environments)
-            .HasForeignKey(e => e.UserId);
+            .HasForeignKey(e => e.UserId)
+            .OnDelete(DeleteBehavior.Cascade); // If the user is deleted, all environments are also deleted
 
             modelBuilder.Entity<TaskEntity>()
             .HasOne(t => t.Environment)
             .WithMany(e => e.Tasks)
-            .HasForeignKey(t => t.EnvironmentId);
+            .HasForeignKey(t => t.EnvironmentId)
+            .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
