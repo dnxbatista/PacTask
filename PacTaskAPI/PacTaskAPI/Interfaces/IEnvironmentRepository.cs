@@ -1,0 +1,19 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using PacTaskAPI.DTOs.Environment;
+using PacTaskAPI.Models;
+
+namespace PacTaskAPI.Interfaces
+{
+    public interface IEnvironmentRepository
+    {
+        Task<List<EnvironmentEntity>> GetUserEnvironments(UserEntity user);
+        Task<EnvironmentEntity?> GetEnvironmentById(int id);
+        Task<bool> CheckIfUserHasEnvironment(int id, UserEntity user);
+        Task<EnvironmentEntity> Create(EnvironmentEntity environmentModel);
+        Task<EnvironmentEntity?> Update(int id, UpdateEnvironmentRequestDto environmentDto);
+        Task<EnvironmentEntity?> Delete(int id);
+    }
+}
