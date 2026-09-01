@@ -1,8 +1,8 @@
 # PacTask
 
-A full-stack task manager application currently under development. The backend API is available, and a React frontend is planned for a future release.
+A full-stack task manager application with a working React frontend connected to the PacTask API. The backend provides user, environment, and task management, while the frontend offers a simple task manager experience built with Vite and Mantine.
 
-> **Current status:** Backend available · Frontend planned
+> **Current status:** Backend available · Frontend available
 
 ## Stack
 

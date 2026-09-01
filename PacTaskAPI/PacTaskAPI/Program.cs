@@ -12,7 +12,6 @@ using PacTaskAPI.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
@@ -86,6 +85,19 @@ builder.Services.AddAuthentication(options => // JWT Bearer part
     };
 });
 
+const string CustomOriginPolicy = "CustomOriginPolicy";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: CustomOriginPolicy,
+    policy =>
+    {
+        policy.WithOrigins("http://localhost:5173")
+        .AllowAnyHeader()
+        .AllowAnyMethod();
+    });
+});
+
 builder.Services.AddScoped<PasswordHasher<UserEntity>>(); // You need this for the injection in the PasswordService
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IEnvironmentRepository, EnvironmentRepository>();
@@ -102,7 +114,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
+
+app.UseCors(CustomOriginPolicy);
 
 app.UseAuthentication();
 
