@@ -1,0 +1,435 @@
+openapi: 3.0.3
+info:
+  title: PacTask API
+  version: v1
+  description: Task management API with JWT authentication
+servers:
+  - url: https://localhost:7169
+security:
+  - bearerAuth: []
+paths:
+  /api/User/register:
+    post:
+      tags: [User]
+      summary: Register a new user
+      operationId: registerUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterUserRequestDto'
+      responses:
+        '200':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoggedUserDto'
+        '400':
+          description: Invalid request payload
+
+  /api/User:
+    post:
+      tags: [User]
+      summary: Login user
+      operationId: loginUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginUserRequestDto'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoggedUserDto'
+        '401':
+          description: Invalid credentials
+    put:
+      tags: [User]
+      summary: Update authenticated user
+      operationId: updateUser
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserRequestDto'
+      responses:
+        '200':
+          description: User updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+        '400':
+          description: Validation or update failure
+
+  /api/Environment:
+    get:
+      tags: [Environment]
+      summary: Get all environments for the authenticated user
+      operationId: getAllUserEnvironments
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of environments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EnvironmentDto'
+    post:
+      tags: [Environment]
+      summary: Create environment for authenticated user
+      operationId: createEnvironment
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateEnvironmentRequestDto'
+      responses:
+        '201':
+          description: Environment created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateEnvironmentRequestDto'
+
+  /api/Environment/{id}:
+    put:
+      tags: [Environment]
+      summary: Update environment by id
+      operationId: updateEnvironment
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateEnvironmentRequestDto'
+      responses:
+        '200':
+          description: Environment updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnvironmentDto'
+    delete:
+      tags: [Environment]
+      summary: Delete environment by id
+      operationId: deleteEnvironment
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Environment deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnvironmentDto'
+
+  /api/Task/{id}:
+    get:
+      tags: [Task]
+      summary: Get all tasks in an environment
+      operationId: getAllTasksFromEnvironment
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Tasks list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TaskDto'
+    post:
+      tags: [Task]
+      summary: Create a new task in an environment
+      operationId: createTask
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTaskEntityRequestDto'
+      responses:
+        '201':
+          description: Task created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateTaskEntityRequestDto'
+    put:
+      tags: [Task]
+      summary: Update task by id
+      operationId: updateTask
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTaskEntityRequestDto'
+      responses:
+        '200':
+          description: Task updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskDto'
+    delete:
+      tags: [Task]
+      summary: Delete task by id
+      operationId: deleteTask
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Task deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskDto'
+
+  /api/Task/{id}/unique:
+    get:
+      tags: [Task]
+      summary: Get a single task by id
+      operationId: getTaskById
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Task found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskDto'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    TaskEntityStatus:
+      type: integer
+      enum: [0, 1]
+      x-enumNames: [NotDone, Done]
+      description: C# enum mapping is 0 = NotDone, 1 = Done
+    RegisterUserRequestDto:
+      type: object
+      required: [username, email, password]
+      properties:
+        username:
+          type: string
+          maxLength: 32
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+    LoginUserRequestDto:
+      type: object
+      required: [username, email, password]
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+    UpdateUserRequestDto:
+      type: object
+      properties:
+        username:
+          type: string
+          nullable: true
+        email:
+          type: string
+          format: email
+          nullable: true
+        password:
+          type: string
+          nullable: true
+    LoggedUserDto:
+      type: object
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+        token:
+          type: string
+    UserDto:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        email:
+          type: string
+        environments:
+          type: array
+          items:
+            $ref: '#/components/schemas/EnvironmentEntity'
+    CreateEnvironmentRequestDto:
+      type: object
+      required: [title]
+      properties:
+        title:
+          type: string
+          maxLength: 32
+    UpdateEnvironmentRequestDto:
+      type: object
+      required: [title]
+      properties:
+        title:
+          type: string
+          maxLength: 32
+    EnvironmentDto:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+    CreateTaskEntityRequestDto:
+      type: object
+      required: [title, description]
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 100
+        description:
+          type: string
+    UpdateTaskEntityRequestDto:
+      type: object
+      required: [title, description, status]
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 100
+        description:
+          type: string
+        status:
+          $ref: '#/components/schemas/TaskEntityStatus'
+    TaskDto:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        status:
+          $ref: '#/components/schemas/TaskEntityStatus'
+        environmentId:
+          type: integer
+    UserEntity:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        email:
+          type: string
+        passwordHash:
+          type: string
+        environments:
+          type: array
+          items:
+            $ref: '#/components/schemas/EnvironmentEntity'
+    EnvironmentEntity:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        tasks:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaskDto'
+        userId:
+          type: integer
+    TaskEntity:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        status:
+          $ref: '#/components/schemas/TaskEntityStatus'
+        environmentId:
+          type: integer
